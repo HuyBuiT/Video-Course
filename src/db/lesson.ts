@@ -50,7 +50,7 @@ export const createOrUpdateLesson = async (data: { name: string, partId: string,
             const createdLesson = await newLesson.save();
             return createdLesson;
         } else {
-            const updatedLesson = await updateLesson(name, {partId, file, en, vn } ); 
+            const updatedLesson = await updateLesson(existingLesson._id, {name, partId, file, en, vn } ); 
             return updatedLesson;
         }
     } catch (error) {
@@ -62,10 +62,10 @@ export const createOrUpdateLesson = async (data: { name: string, partId: string,
     }
 };
 
-export const updateLesson = async (name: string, updatedFields: object) => {
+export const updateLesson = async (id: ObjectId, updatedFields: object) => {
     try {
         const updatedLesson = await LessonModel.findOneAndUpdate(
-            { name: name },
+            { _id: id },
             { $set: updatedFields },
             { new: true } // To return the updated document
         );

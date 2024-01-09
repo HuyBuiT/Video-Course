@@ -56,10 +56,10 @@ export const getPartByNameAndCourseId = async (name: string, courseId: string) =
 //     }
 // };
 
-export const updatePart = async (name: string, updatedFields: object) => {
+export const updatePart = async (id: ObjectId, updatedFields: object) => {
     try {
         const updatedPart = await PartModel.findOneAndUpdate(
-            { name: name },
+            { _id: id },
             { $set: updatedFields },
             { new: true } // To return the updated document
         );
@@ -86,7 +86,7 @@ export const createOrUpdatePart = async (data: { name: string, courseId: string,
             const createdPart = await newPart.save();
             return createdPart;
         } else {
-            const updatedPart = await updatePart(name, { courseId, path }); // Call the updatePart function
+            const updatedPart = await updatePart(existingPart._id, { name, courseId, path }); // Call the updatePart function
             return updatedPart;
         }
     } catch (error) {
