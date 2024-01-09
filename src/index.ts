@@ -26,9 +26,6 @@ if (process.env.DB_URL) {
   process.exit(1);
 }
 
-app.get("/hello", (req, res) => {
-    res.send("hello");
-});
 app.get("/", (req, res) => {
   res.send("Video course");
 });
