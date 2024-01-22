@@ -81,3 +81,30 @@ export const updateLesson = async (id: ObjectId, updatedFields: object) => {
         }
     }
 };
+
+export const getLessonsByPartId =async (partId:string) => {
+    try {
+        const lessons = await LessonModel.find({ partId });
+    
+        return lessons;
+      } catch (error) {
+        if (error instanceof Error) {
+          throw new Error(`Could not get lessons by part ID: ${error.message}`);
+        } else {
+          throw new Error('An unknown error occurred');
+        }
+      }
+}
+
+export const getLessonsByLessonId =async (lessonId:string) => {
+    try {
+        const lesson = await LessonModel.findById(lessonId);
+        return lesson;
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(`Could not get lesson by lesson ID: ${error.message}`);
+          } else {
+            throw new Error('An unknown error occurred');
+          }
+    }
+}

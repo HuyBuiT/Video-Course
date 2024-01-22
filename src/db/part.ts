@@ -34,28 +34,6 @@ export const getPartByNameAndCourseId = async (name: string, courseId: string) =
     }
 };
 
-// export const createPart = async (data: { name: string, courseId: string, path: string }) => {
-//     try {
-//         const { name, courseId } = data;
-
-//         const existingPart = await getPartByNameAndCourseId(name, courseId);
-
-//         if (!existingPart) {
-//             const newPart = new PartModel(data);
-//             const createdPart = await newPart.save();
-//             return createdPart;
-//         } else {
-//             return;
-//         }
-//     } catch (error) {
-//         if (error instanceof Error) {
-//             throw new Error(`Could not create part: ${error.message}`);
-//         } else {
-//             throw new Error('An unknown error occurred');
-//         }
-//     }
-// };
-
 export const updatePart = async (id: ObjectId, updatedFields: object) => {
     try {
         const updatedPart = await PartModel.findOneAndUpdate(
@@ -97,3 +75,17 @@ export const createOrUpdatePart = async (data: { name: string, courseId: string,
         }
     }
 };
+export const getPartByCourseId = async (courseId: string) => {
+    try {
+      const parts = await PartModel.find({ courseId });
+  
+      return parts;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Could not get parts by course ID: ${error.message}`);
+      } else {
+        throw new Error('An unknown error occurred');
+      }
+    }
+};
+  

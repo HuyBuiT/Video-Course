@@ -75,3 +75,16 @@ export const updateCourse = async (name: string, updatedFields: Object) => {
         }
     }
 };
+
+export const getAllCourses =async () => {
+    try {
+        const course = await CourseModel.find();
+        return course;
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(`Could not get course by name: ${error.message}`);
+        } else {
+            throw new Error('An unknown error occurred');
+        }
+    }
+}
