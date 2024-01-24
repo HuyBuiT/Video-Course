@@ -47,4 +47,18 @@ router.get('/video', (req: express.Request, res: express.Response) => {
   }
 });
 
+router.get("/caption", (req: express.Request, res: express.Response) => {
+  const captionPath = req.query.path as string;
+
+  fs.readFile(captionPath, 'utf8', (err, data) => {
+    if (err) {
+        console.error("Error reading caption file:", err);
+        res.status(500).send("Internal Server Error");
+    } else {
+        // Assuming the caption file is in VTT format
+        res.header('Content-Type', 'text/vtt');
+        res.send(data);
+    }
+  });
+})
 module.exports = router;

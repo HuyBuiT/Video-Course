@@ -27,7 +27,7 @@ export const scanFolder =async (req:express.Request, res: express.Response) => {
                                 name: lessonName,
                                 partId: partId.toString(),
                                 file: `Source video/${f}/${lessonName}.mp4`,
-                                en: `/Source video/${f}/${lessonName}_en.srt`
+                                en: `Source video/${f}/${lessonName}_en.vtt`
             
                             }
                             const createdLesson = await createOrUpdateLesson(lessonData)
