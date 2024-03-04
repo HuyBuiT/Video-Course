@@ -86,13 +86,10 @@ router.get("/caption", (req: express.Request, res: express.Response) => {
 
 // Schedule the /scan API to run every day at a specific time (e.g., 8:00 AM)
 cron.schedule("19 15 * * *", async () => {
-  const courseId = "659bcc06ea253d5fdcb633cb";
   try {
     console.log("Running scheduled task: /scan");
     // Call the /scan API here
-    const response = await axios.post("http://localhost:5500/api/scan", {
-      courseId,
-    });
+    const response = await axios.post("http://localhost:5500/api/scan");
     console.log("Scheduled task completed:", response.data);
   } catch (error) {
     console.error("Error running scheduled task:", error);

@@ -10,23 +10,21 @@ import {
   getLessonsByLessonId,
   getLessonsByPartId,
 } from "../db/lesson";
-import { getAllCourses } from "../db/course";
-export const scanFolder = async (
-  req: express.Request,
-  res: express.Response
-) => {
+import { createCourse, getAllCourses, getCourseByName } from "../db/course";
+import { ObjectId } from "mongodb";
+
+const scanFolderInCourse = async (courseId: ObjectId, courseName: string) => {
   try {
-    const folder = await fs.readdir("./Source video");
-    const courseId = req.body.courseId;
+    const folder = await fs.readdir("./Source_video/" + courseName);
     for (const f of folder) {
       try {
         const partData = {
           name: f,
-          courseId: courseId,
-          path: `./Source video/${f}`,
+          courseId: courseId.toString(),
+          path: `./Source_video/${courseName}/${f}`,
         };
         const create = await createOrUpdatePart(partData);
-        const childrenFolder = await fs.readdir(`./Source video/${f}`);
+        const childrenFolder = await fs.readdir(`./Source_video/${courseName}/${f}`);
         const filtered = childrenFolder.filter((file) => file.endsWith(".mp4")); // lesson
         const part = await getPartByNameAndCourseId(f, courseId.toString());
         const partId = part?._id;
@@ -37,8 +35,8 @@ export const scanFolder = async (
             const lessonData = {
               name: lessonName,
               partId: partId.toString(),
-              file: `Source video/${f}/${lessonName}.mp4`,
-              en: `Source video/${f}/${lessonName}_en.vtt`,
+              file: `Source_video/${courseName}/${f}/${lessonName}.mp4`,
+              en: `Source_video/${courseName}/${f}/${lessonName}_en.vtt`,
             };
             const createdLesson = await createOrUpdateLesson(lessonData);
           }
@@ -48,12 +46,41 @@ export const scanFolder = async (
         // Handle or log the error as per your requirements
       }
     }
-    res.status(200).send({ status: 200, Success: String });
+
   } catch (error) {
     console.error(error);
-    res.status(400).send("error");
+
   }
 };
+
+export const scanFolder = async(req: express.Request, res: express.Response) => {
+  try {
+    const courses = await fs.readdir("./Source_video");
+    for (const course of courses) {
+      try {
+        const courseObject = await getCourseByName(course);
+        if(courseObject) {
+          await scanFolderInCourse(courseObject._id, courseObject.name);
+        } else {
+          await createCourse(course, true);
+          const courseObject = await getCourseByName(course);
+          if(courseObject) {
+            await scanFolderInCourse(courseObject._id, courseObject.name);
+          }
+        }
+
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    res.status(200).send({ status: 200, Success: String });
+    return;
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ status: 500, Error: String });
+    return;
+  }
+}
 
 export const getParts = async (req: express.Request, res: express.Response) => {
   try {
